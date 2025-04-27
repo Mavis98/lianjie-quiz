@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>廉洁新风趣味问答比赛</title>
+    <style>
+        :root {
+            --primary-color: #e74c3c;
+            --secondary-color: #3498db;
+            --correct-color: #2ecc71;
+            --incorrect-color: #f1c40f;
+            --text-color: #333;
+            --light-bg: #f9f9f9;
+            --dark-bg: #2c3e50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: url('https://q8.itc.cn/q_70/images03/20240726/06b2d9aadff54aee93f05e247b900164.png') no-repeat center center fixed;
+            background-size: cover;
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.95);
+            transition: all 0.3s ease;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #c0392b);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+            animation: shine 3s infinite linear;
+        }
+        
+        @keyframes shine {
+            0% { transform: rotate(30deg) translate(-10%, -10%); }
+            100% { transform: rotate(30deg) translate(10%, 10%); }
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            position: relative;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .welcome-screen, .question-container, .result-container {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .welcome-screen {
+            text-align: center;
+        }
+        
+        .welcome-screen p {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(41, 128, 185, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(41, 128, 185, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .btn:hover::after {
+            opacity: 1;
+        }
+        
+        .question-container {
+            display: none;
+        }
+        
+        .question-container.active {
+            display: block;
+        }
+        
+        .question {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .option {
+            padding: 15px;
+            background-color: var(--light-bg);
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option:hover {
+            border-color: var(--secondary-color);
+            transform: translateX(5px);
+        }
+        
+        .option::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: var(--secondary-color);
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.3s;
+        }
+        
+        .option:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .option.correct {
+            background-color: var(--correct-color);
+            color: white;
+            border-color: var(--correct-color);
+        }
+        
+        .option.incorrect {
+            background-color: var(--incorrect-color);
+            color: white;
+            border-color: var(--incorrect-color);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #f39c12);
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .result-container {
+            display: none;
+            text-align: center;
+        }
+        
+        .result-container.active {
+            display: flex;
+        }
+        
+        .score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 20px 0;
+        }
+        
+        .message {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100vh) rotate(360deg); }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .question {
+                font-size: 1.1rem;
+            }
+            
+            .option {
+                font-size: 1rem;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>廉洁新风趣味问答比赛</h1>
+        </div>
+        
+        <div class="welcome-screen" id="welcome-screen">
+            <p>检验你的廉洁知识水平，看看你是否能成为廉洁新风的榜样！</p>
+            <button class="btn" id="start-btn">开始答题</button>
+        </div>
+        
+        <div id="question1" class="question-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress1" style="width: 20%"></div>
+            </div>
+            <div class="question">1. 中国共产党是（ ）的先锋队，同时是中国人民和中华民族的先锋队。</div>
+            <div class="options">
+                <div class="option" data-correct="true">A. 中国工人阶级</div>
+                <div class="option" data-correct="false">B. 农民阶级</div>
+                <div class="option" data-correct="false">C. 知识分子</div>
+                <div class="option" data-correct="false">D. 武装力量</div>
+            </div>
+        </div>
+        
+        <div id="question2" class="question-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress2" style="width: 40%"></div>
+            </div>
+            <div class="question">2. 下列哪个成语是"廉洁"的反面典型？</div>
+            <div class="options">
+                <div class="option" data-correct="false">A. 两袖清风</div>
+                <div class="option" data-correct="true">B. 中饱私囊</div>
+                <div class="option" data-correct="false">C. 明镜高悬</div>
+            </div>
+        </div>
+        
+        <div id="question3" class="question-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress3" style="width: 60%"></div>
+            </div>
+            <div class="question">3. 同事悄悄送你一张500元购物卡，希望加快项目审批，你会：</div>
+            <div class="options">
+                <div class="option" data-correct="false">A. 收下并优先处理</div>
+                <div class="option" data-correct="true">B. 婉拒并按流程办理</div>
+                <div class="option" data-correct="false">C. 收下后上交纪检部门</div>
+            </div>
+        </div>
+        
+        <div id="question4" class="question-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress4" style="width: 80%"></div>
+            </div>
+            <div class="question">4. 以下哪种植物常被比喻为清正廉洁的象征？</div>
+            <div class="options">
+                <div class="option" data-correct="false">A. 牡丹</div>
+                <div class="option" data-correct="true">B. 莲花</div>
+                <div class="option" data-correct="false">C. 松树</div>
+            </div>
+        </div>
+        
+        <div id="question5" class="question-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress5" style="width: 100%"></div>
+            </div>
+            <div class="question">5. 某领导让下属用"小金库"资金购买高档礼品赠送给上级单位，并说："这是为了单位发展，不算违纪。"以下哪种做法最合规？</div>
+            <div class="options">
+                <div class="option" data-correct="false">A. 照办，反正是领导要求的</div>
+                <div class="option" data-correct="false">B. 拒绝并向上级纪委举报</div>
+                <div class="option" data-correct="false">C. 先执行，再匿名反映</div>
+                <div class="option" data-correct="true">D. 建议用正规经费按程序审批</div>
+            </div>
+        </div>
+        
+        <div id="result" class="result-container">
+            <div class="score">你的得分: <span id="final-score">0</span>/100</div>
+            <div class="message" id="result-message"></div>
+            <button class="btn" onclick="restartQuiz()">重新开始</button>
+        </div>
+    </div>
+
+    <script>
+        // 创建粒子效果
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机大小
+                const size = Math.random() * 10 + 5;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // 随机位置
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.bottom = `-${size}px`;
+                
+                // 随机动画时长和延迟
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                particle.style.animation = `float ${duration}s linear ${delay}s infinite`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // 初始化游戏
+        function initGame() {
+            createParticles();
+            
+            let currentQuestion = 1;
+            let score = 100;
+            const totalQuestions = 5;
+            
+            // 开始按钮点击事件
+            document.getElementById('start-btn').addEventListener('click', function() {
+                document.getElementById('welcome-screen').style.display = 'none';
+                document.getElementById(`question${currentQuestion}`).classList.add('active');
+            });
+            
+            // 选项点击事件
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (this.classList.contains('correct') || this.classList.contains('incorrect')) {
+                        return; // 已经回答过的问题不再处理
+                    }
+                    
+                    const isCorrect = this.getAttribute('data-correct') === 'true';
+                    
+                    if (isCorrect) {
+                        this.classList.add('correct');
+                    } else {
+                        this.classList.add('incorrect');
+                        score -= 20;
+                        
+                        // 显示正确答案
+                        const correctOption = this.parentElement.querySelector('.option[data-correct="true"]');
+                        correctOption.classList.add('correct');
+                    }
+                    
+                    // 禁用所有选项
+                    this.parentElement.querySelectorAll('.option').forEach(opt => {
+                        opt.style.pointerEvents = 'none';
+                    });
+                    
+                    // 延迟后跳转到下一题或显示结果
+                    setTimeout(() => {
+                        document.getElementById(`question${currentQuestion}`).classList.remove('active');
+                        
+                        if (currentQuestion < totalQuestions) {
+                            currentQuestion++;
+                            document.getElementById(`question${currentQuestion}`).classList.add('active');
+                        } else {
+                            showResult();
+                        }
+                    }, 1000);
+                });
+            });
+            
+            // 显示结果
+            function showResult() {
+                document.getElementById('final-score').textContent = score;
+                const messageElement = document.getElementById('result-message');
+                
+                if (score === 100) {
+                    messageElement.textContent = '恭喜你，你是廉洁新风好榜样！';
+                } else {
+                    messageElement.textContent = '很遗憾，请继续接受廉洁教育吧~';
+                }
+                
+                document.getElementById('result').classList.add('active');
+            }
+            
+            // 重新开始游戏
+            window.restartQuiz = function() {
+                currentQuestion = 1;
+                score = 100;
+                
+                document.getElementById('result').classList.remove('active');
+                document.querySelectorAll('.question-container').forEach(container => {
+                    container.classList.remove('active');
+                });
+                
+                // 重置所有选项
+                document.querySelectorAll('.option').forEach(option => {
+                    option.classList.remove('correct', 'incorrect');
+                    option.style.pointerEvents = 'auto';
+                });
+                
+                document.getElementById('welcome-screen').style.display = 'flex';
+            };
+        }
+        
+        // 页面加载完成后初始化游戏
+        window.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
