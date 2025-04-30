@@ -283,11 +283,11 @@
     
     <div class="container">
         <div class="header">
-            <h1>廉洁新风趣味问答比赛</h1>
+            <h1>八项规定·清风问答</h1>
         </div>
         
         <div class="welcome-screen" id="welcome-screen">
-            <p>检验你的廉洁知识水平，看看你是否能成为廉洁新风的榜样！</p>
+            <p>测一测，你对八项规定知多少？——10道题，让清廉之风入脑入心！</p>
             <button class="btn" id="start-btn">开始答题</button>
         </div>
         
@@ -514,10 +514,10 @@
                 document.getElementById('final-score').textContent = score;
                 const messageElement = document.getElementById('result-message');
                 
-                if (score === 90) {
-                    messageElement.textContent = '恭喜你，你是廉洁新风好榜样！';
+                if (score === 100) {
+                    messageElement.textContent = '满分通过！愿您始终以八项规定为镜，常怀律己之心，永葆清廉本色。';
                 } else {
-                    messageElement.textContent = '很遗憾，请继续接受廉洁教育吧~';
+                    messageElement.textContent = '答错不可怕，纪律记心中！请继续学习，筑牢廉洁防线。';
                 }
                 
                 document.getElementById('result').classList.add('active');
